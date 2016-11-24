@@ -26,6 +26,7 @@ class Ctrl{
 		this.app.post('/api/cart', this.post.bind(this))
 		this.app.put('/api/cart/:id', this.put.bind(this))
 		this.app.delete('/api/cart/:id', this.delete.bind(this))
+		this.app.post('/api/cart/clear', this.clear.bind(this))
 	}
 
 	/**
@@ -331,6 +332,39 @@ class Ctrl{
 			if (!doc) return res.tools.setJson(1, '资源不存在或已删除')
 			return res.tools.setJson(0, '删除成功')
 		})
+		.catch(err => next(err))
+	}
+
+	/**
+	 * @api {clear} /cart/clear 清空某个指定资源
+	 * @apiDescription 清空某个指定资源
+	 * @apiName clear
+	 * @apiGroup cart
+	 *
+	 * @apiSampleRequest /cart/clear
+	 * 
+	 * @apiPermission none
+	 * 
+	 * @apiUse Header
+	 * @apiUse Success
+	 *
+	 * @apiSuccessExample Success-Response:
+	 *     HTTP/1.1 200 OK
+	 *     {
+	 *       "meta": {
+	 *       	"code": 0,
+	 *       	"message": "删除成功"
+	 *       },
+	 *       "data": null
+	 *     }
+	 */
+	clear(req, res, next) {
+		const query = {
+			user: req.user._id
+		}
+
+		this.model.removeAsync(query)
+		.then(doc => res.tools.setJson(0, '删除成功'))
 		.catch(err => next(err))
 	}
 }
