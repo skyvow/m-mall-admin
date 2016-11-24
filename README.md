@@ -5,6 +5,7 @@
 This is a boilerplate application for building REST APIs in Node.js using ES6 and Express with Code Coverage and JWT Authentication.
 
 backend technology **Node.js** 、 **MongoDB** 、 **Redis** 、 **Express** 、 **ES6**
+
 frontend technology **Angular.js** 、 **Ionic** 、 **ES6** 、 **Webpack**
 
 ##	Directory
