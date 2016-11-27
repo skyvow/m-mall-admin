@@ -82,9 +82,14 @@ class Ctrl{
 	 *     }
 	 */
 	getAll(req, res, next) {
+		const status = req.query.type
+
 		const query = {
-			user: req.user._id
+			user  : req.user._id,
+			status: status,
 		}
+
+		status === 'all' && delete query.status
 
 		const opts = {
 			page : req.query.page, 
