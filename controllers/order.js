@@ -103,12 +103,8 @@ class Ctrl{
 		}
 
 		const options = {
-			path    : 'items user', 
+			path    : 'user', 
 			select  : {}, 
-			populate: {
-				path  : 'goods', 
-				select: {}, 
-			}, 
 		}
 
 		Promise.all([
@@ -175,12 +171,8 @@ class Ctrl{
 		}
 
 		const options = {
-			path    : 'items user', 
+			path    : 'user', 
 			select  : {}, 
-			populate: {
-				path  : 'goods', 
-				select: {}, 
-			}, 
 		}
 
 		this.model.findOneAndPopulateAsync(params, options)
@@ -223,21 +215,64 @@ class Ctrl{
 	 */
 	post(req, res, next) {
 		const body = {
-			items     : req.body.items, 
-			address_id: req.body.address_id, 
-			user      : req.user._id, 
+			items      : [], 
+			totalAmount: 0, 
+			address_id : req.body.address_id, 
+			user       : req.user._id, 
+		}
+
+		const query = {
+			_id: {
+				$in: req.body.items.map(n => n.id),
+			},
+		}
+
+		const params = {
+			query  : query, 
+			fields : {}, 
+			options: {}, 
+		}
+
+		const options = {
+			path    : 'types', 
+			select  : {}, 
 		}
 
 		proxy.address.findByIdAsync(body.address_id)
 		.then(doc => {
-			if (!doc) return res.tools.setJson(1, '资源不存在或已删除')
+			if (!doc) return res.tools.setJson(1, '地址不存在或已删除')
 			body.recipientName = doc.name
 			body.recipientGender = doc.gender
 			body.recipientTel = doc.tel
 			body.recipientAddress = doc.address
+			return proxy.goods.findAndPopulateAsync(params, options)
+		})
+		.then(doc => {
+			doc.forEach(n => {
+				const items = {
+					goods: n,
+					meta : {},
+				}
+				req.body.items.forEach(m => {
+					if (n._id.toString() === m.id.toString()) {
+						items.meta.total = Math.abs(m.total)
+						items.meta.totalAmount = Math.abs(n.price * m.total)
+						body.totalAmount += items.meta.totalAmount
+					}
+				})
+				body.items.push(items)
+			})
 			return this.model.post(body)
 		})
-		.then(doc => res.tools.setJson(0, '新增成功', {_id: doc._id}))
+		.then(doc => {
+			proxy.cart.removeAsync({
+				user: req.user._id,
+				goods: {
+					$in: req.body.items.map(n => n.id),
+				},
+			})
+			res.tools.setJson(0, '新增成功', {_id: doc._id})
+		})
 		.catch(err => next(err))
 	}
 

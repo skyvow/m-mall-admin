@@ -14,10 +14,7 @@ const Schema = mongoose.Schema({
 	recipientGender: String,
 	recipientTel: String,
 	recipientAddress: String,
-	items    : [{
-		type: ObjectId, 
-		ref : 'cart',
-	}],
+	items    : Array,
 	user     : {
 		type: ObjectId, 
 		ref : 'user',

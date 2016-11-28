@@ -289,8 +289,8 @@ class Ctrl{
 		this.model.findOneAsync(query)
 		.then(doc => {
 			if (!doc) return res.tools.setJson(1, '资源不存在或已删除')
-			doc.total = doc.total + body.total
-			doc.totalAmount = goods.price * doc.total
+			doc.total = Math.abs(body.total)
+			doc.totalAmount = Math.abs(doc.amount * doc.total)
 			return doc.save()
 		})
 		.then(doc => res.tools.setJson(0, '更新成功', doc))

@@ -56,6 +56,16 @@ class Ctrl {
                         }
                     ]
                 },
+                {
+                    url: null,
+                    name: '订单管理',
+                    children: [
+                        {
+                            url: 'web.order.list',
+                            name: '所有订单'
+                        }
+                    ]
+                },
             ],
             line: [],
             flat: [
@@ -75,6 +85,12 @@ class Ctrl {
                     icon: 'fa-photo',
                     name: '图片管理',
                     url: 'web.banner.list',
+                    bg: '',
+                },
+                {
+                    icon: 'fa-file',
+                    name: '订单管理',
+                    url: 'web.order.list',
                     bg: '',
                 },
             ]

@@ -757,6 +757,10 @@
 	}
 }
 
+.action-sheet .button.active {
+	color: red;
+}
+
 .prompt-message {
     margin-top: 50%;
     text-align: center;
@@ -1170,6 +1174,17 @@
     p {
     	margin: 0;
     }
+}
+
+.weui-form-preview__label {
+    float: left;
+    margin-right: 1em;
+    min-width: 4em;
+    color: #999999;
+    text-align: justify;
+    text-align-last: justify;
+    font-size: inherit;
+    line-height: inherit;
 }
 
 .pane,

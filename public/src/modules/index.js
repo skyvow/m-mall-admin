@@ -4,6 +4,7 @@ import user from './user/index'
 import banner from './banner/index'
 import classify from './classify/index'
 import goods from './goods/index'
+import order from './order/index'
 
 angular
     .module('App', [
@@ -13,4 +14,5 @@ angular
         banner.name,
         classify.name,
         goods.name,
+        order.name,
     ])
