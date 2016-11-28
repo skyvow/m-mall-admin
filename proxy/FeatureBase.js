@@ -39,13 +39,13 @@ class FeatureBase{
 		for(let key in self.instanceSource) {	
 			self.instanceSource[key].forEach(function(value) {
 				self[value + self.suffix] = function() {
-					return self.getPromise(bluebird, self.getResolver(self.model[value], [...arguments], self.model))
+					return self.getPromise(bluebird, self.getResolver(self.model[value], [...Array.from(arguments)], self.model))
 				}
 			})
 		}
 		self.modelStaticsList.forEach(function(value) {
 			self[value + self.suffix] = function() {
-				return self.getPromise(bluebird, self.getResolver(self.model[value], [...arguments], self.model))
+				return self.getPromise(bluebird, self.getResolver(self.model[value], [...Array.from(arguments)], self.model))
 			}
 		})
 	}
@@ -78,7 +78,7 @@ class FeatureBase{
 		return function(resolve, reject) {
 			args.push(function(err) {
 				if (err) return reject(err)
-				let receivedArgs = [...arguments]
+				let receivedArgs = [...Array.from(arguments)]
 				// remove the first argument for error
 				receivedArgs.shift()
 				resolve(receivedArgs.length > 1 ? receivedArgs : receivedArgs[0])
