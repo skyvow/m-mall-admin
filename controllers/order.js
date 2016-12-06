@@ -114,7 +114,7 @@ class Ctrl{
 		.then(docs => {
 			res.tools.setJson(0, '调用成功', {
 				items   : docs[1], 
-				paginate: new res.paginate(Number(options.page), Number(options.limit), docs[0]).item, 
+				paginate: new res.paginate(Number(opts.page), Number(opts.limit), docs[0]).item, 
 			})
 		})
 		.catch(err => next(err))
