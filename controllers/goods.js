@@ -26,6 +26,7 @@ class Ctrl{
 		this.app.post('/api/goods', this.post.bind(this))
 		this.app.put('/api/goods/:id', this.put.bind(this))
 		this.app.delete('/api/goods/:id', this.delete.bind(this))
+		this.app.get('/api/goods/search/all', this.search.bind(this))
 	}
 
 	/**
@@ -85,6 +86,10 @@ class Ctrl{
 
 		if (req.query.type) {
 			query.types = req.query.type
+		}
+
+		if (req.query.keyword) {
+			query.name = req.query.keyword
 		}
 
 		const params = {
@@ -303,6 +308,56 @@ class Ctrl{
 			if (!doc) return res.tools.setJson(1, '资源不存在或已删除')
 			return res.tools.setJson(0, '删除成功')
 		})
+		.catch(err => next(err))
+	}
+
+	/**
+	 * @api {search} /goods/search/all 按关键词查询资源
+	 * @apiDescription 按关键词查询资源
+	 * @apiName search
+	 * @apiGroup goods
+	 *
+	 * @apiParam {String} keyword 关键词
+	 * @apiSampleRequest /goods/search/all
+	 * 
+	 * @apiPermission none
+	 * 
+	 * @apiUse Header
+	 * @apiUse Success
+	 *
+	 * @apiSuccessExample Success-Response:
+	 *     HTTP/1.1 200 OK
+	 *     {
+	 *       "meta": {
+	 *       	"code": 0,
+	 *       	"message": "调用成功"
+	 *       },
+	 *       "data": [{
+	 *       	"_id": "_id",
+	 *       	"num": "num",
+	 *       }]
+	 *     }
+	 */
+	search(req, res, next) {
+		const keyword = req.query.keyword
+		const pattern = keyword && new RegExp(keyword)
+
+		this.model.model.aggregate([
+			{
+				$match: {
+					name: pattern
+				}
+			},
+			{
+				$group: {
+					_id: '$name',
+					num: {
+						$sum: 1
+					}
+				}
+			}
+		])
+		.then(doc => res.tools.setJson(0, '调用成功', doc))
 		.catch(err => next(err))
 	}
 }
