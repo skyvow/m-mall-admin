@@ -66,6 +66,20 @@ class Ctrl {
                         }
                     ]
                 },
+                {
+                    url: null,
+                    name: '帮助管理',
+                    children: [
+                        {
+                            url: 'web.help.list',
+                            name: '所有帮助'
+                        },
+                        {
+                            url: 'web.help.add',
+                            name: '添加帮助'
+                        }
+                    ]
+                },
             ],
             line: [],
             flat: [
@@ -91,6 +105,12 @@ class Ctrl {
                     icon: 'fa-file',
                     name: '订单管理',
                     url: 'web.order.list',
+                    bg: '',
+                },
+                {
+                    icon: 'fa-bookmark-o',
+                    name: '帮助管理',
+                    url: 'web.help.list',
                     bg: '',
                 },
             ]
