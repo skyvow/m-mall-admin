@@ -30,4 +30,8 @@ export default {
 		'confirmed': '已确认', 
 		'finished' : '已完成', 
 	},
+	wechat: {
+		appid: 'wx4ec54c44008298ec', 
+		secret: '8295e6dd753aab17624e0bb0e1c4e98d', 
+	},
 }

@@ -1,3 +1,4 @@
+import request from 'request'
 import config from '../config'
 import jwt from '../common/jwtauth'
 import proxy from '../proxy'
@@ -25,12 +26,132 @@ class Ctrl{
 	 * 注册路由
 	 */
 	routes() {
+		this.app.post('/api/user/wechat/sign/up', this.wechatSignUp.bind(this))
+		this.app.post('/api/user/wechat/sign/in', this.wechatSignIn.bind(this))
 		this.app.post('/api/user/sign/up', this.signUp.bind(this))
 		this.app.post('/api/user/sign/in', this.signIn.bind(this))
 		this.app.post('/api/user/sign/out', this.signOut.bind(this))
 		this.app.post('/api/user/reset/password', this.resetPassword.bind(this))
 		this.app.post('/api/user/info', this.saveInfo.bind(this))
 		this.app.get('/api/user/info', this.getInfo.bind(this))
+	}
+
+	/**
+	 * 封装request请求
+	 */
+	requestAsync(url) {
+		return new Promise((reslove, reject) => {
+			request({url: url}, (err, res, body) => {
+				if (err) return reject(err)
+				return reslove(body)
+			})
+		})
+	}
+
+	/**
+	 * code 换取 session_key
+	 */
+	getSessionKey(code) {
+		const appid = config.wechat.appid
+		const secret = config.wechat.secret
+		const url = `https://api.weixin.qq.com/sns/jscode2session?appid=${appid}&secret=${secret}&js_code=${code}&grant_type=authorization_code`
+		return this.requestAsync(url)
+	}
+
+	/**
+	 * @api {post} /user/wechat/sign/up 微信用户注册
+	 * @apiDescription 微信用户注册
+	 * @apiName wechatSignUp
+	 * @apiGroup user
+	 *
+	 * @apiParam {String} code 登录凭证
+	 *
+	 * @apiPermission none
+	 * @apiSampleRequest /user/wechat/sign/up
+	 * 
+	 * @apiUse Success
+	 *
+	 * @apiSuccessExample Success-Response:
+	 *     HTTP/1.1 200 OK
+	 *     {
+	 *       "meta": {
+	 *       	"code": 0,
+	 *       	"message": "注册成功"
+	 *       },
+	 *       "data": {
+	 *       	"token": "token"
+	 *       }
+	 *     }
+	 */
+	wechatSignUp(req, res, next) {
+		const code = req.body.code
+		const body = {
+			username: null, 
+			password: res.jwt.setMd5('123456'), 
+		}
+
+		this.getSessionKey(code)
+		.then(doc => {
+			doc = JSON.parse(doc)
+			if (doc && doc.errmsg) return res.tools.setJson(doc.errcode, doc.errmsg)
+			if (doc && doc.openid) {
+				body.username = doc.openid
+				return this.model.findByName(doc.openid)
+			}
+		})
+		.then(doc => {
+			if (!doc) return this.model.newAndSave(body)
+			if (doc && doc._id) return res.tools.setJson(1, '用户名已存在')
+		})
+		.then(doc => {
+			if (doc && doc._id) return res.tools.setJson(0, '注册成功', {
+				token: res.jwt.setToken(doc._id)
+			})
+		})
+		.catch(err => next(err))
+	}
+
+	/**
+	 * @api {post} /user/wechat/sign/in 微信用户登录
+	 * @apiDescription 微信用户登录
+	 * @apiName wechatSignIn
+	 * @apiGroup user
+	 *
+	 * @apiParam {String} code 登录凭证
+	 *
+	 * @apiPermission none
+	 * @apiSampleRequest /user/wechat/sign/in
+	 * 
+	 * @apiUse Success
+	 *
+	 * @apiSuccessExample Success-Response:
+	 *     HTTP/1.1 200 OK
+	 *     {
+	 *       "meta": {
+	 *       	"code": 0,
+	 *       	"message": "登录成功"
+	 *       },
+	 *       "data": {
+	 *       	"token": "token"
+	 *       }
+	 *     }
+	 */
+	wechatSignIn(req, res, next) {
+		const code = req.body.code
+
+		this.getSessionKey(code)
+		.then(doc => {
+			doc = JSON.parse(doc)
+			if (doc && doc.errmsg) return res.tools.setJson(doc.errcode, doc.errmsg)
+			if (doc && doc.openid) return this.model.findByName(doc.openid)
+		})
+		.then(doc => {
+			if (!doc) return res.tools.setJson(1, '用户名不存在')
+			if (doc && doc._id) return res.tools.setJson(0, '登录成功', {
+				token: res.jwt.setToken(doc._id)
+			})
+		})
+		.catch(err => next(err))
 	}
 
 	/**
