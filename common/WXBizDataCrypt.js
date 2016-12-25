@@ -13,13 +13,15 @@ class WXBizDataCrypt {
 		let sessionKey = new Buffer(this.sessionKey, 'base64')
 		let encryptedData = new Buffer(_encryptedData, 'base64')
 		let iv = new Buffer(_iv, 'base64')
+		let decoded, decipher
 
 		try {
 			// 解密
-			let decipher = crypto.createDecipheriv('aes-128-cbc', sessionKey, iv)
+			decipher = crypto.createDecipheriv('aes-128-cbc', sessionKey, iv)
+			
 			// 设置自动 padding 为 true，删除填充补位
 			decipher.setAutoPadding(true)
-			let decoded = decipher.update(encryptedData, 'binary', 'utf8')
+			decoded = decipher.update(encryptedData, 'binary', 'utf8')
 			decoded += decipher.final('utf8')
 
 			decoded = JSON.parse(decoded)
