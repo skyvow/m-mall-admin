@@ -57,7 +57,7 @@ class Ctrl{
 		const appid = config.wechat.appid
 		const secret = config.wechat.secret
 		const url = `https://api.weixin.qq.com/sns/jscode2session?appid=${appid}&secret=${secret}&js_code=${code}&grant_type=authorization_code`
-		return this.requestAsync(url).then(doc => JSON.parse(doc), err => err)
+		return this.requestAsync(url)
 	}
 
 	/**
@@ -94,6 +94,7 @@ class Ctrl{
 
 		this.getSessionKey(code)
 		.then(doc => {
+			doc = JSON.parse(doc)
 			if (doc && doc.errmsg) return res.tools.setJson(doc.errcode, doc.errmsg)
 			if (doc && doc.openid) {
 				body.username = doc.openid
@@ -142,6 +143,7 @@ class Ctrl{
 
 		this.getSessionKey(code)
 		.then(doc => {
+			doc = JSON.parse(doc)
 			if (doc && doc.errmsg) return res.tools.setJson(doc.errcode, doc.errmsg)
 			if (doc && doc.openid) return this.model.findByName(doc.openid)
 		})
@@ -194,6 +196,7 @@ class Ctrl{
 
 		this.getSessionKey(code)
 		.then(doc => {
+			doc = JSON.parse(doc)
 			if (doc.errmsg) return res.tools.setJson(doc.errcode, doc.errmsg)
 			if (doc.openid) {
 				const pc = new WXBizDataCrypt(appid, doc.session_key)
