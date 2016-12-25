@@ -1,6 +1,7 @@
 import request from 'request'
 import config from '../config'
 import jwt from '../common/jwtauth'
+import WXBizDataCrypt from '../common/WXBizDataCrypt'
 import proxy from '../proxy'
 import jwtauth from '../middlewares/jwtauth'
 
@@ -28,6 +29,7 @@ class Ctrl{
 	routes() {
 		this.app.post('/api/user/wechat/sign/up', this.wechatSignUp.bind(this))
 		this.app.post('/api/user/wechat/sign/in', this.wechatSignIn.bind(this))
+		this.app.post('/api/user/wechat/decrypt/data', this.wechatDecryptData.bind(this))
 		this.app.post('/api/user/sign/up', this.signUp.bind(this))
 		this.app.post('/api/user/sign/in', this.signIn.bind(this))
 		this.app.post('/api/user/sign/out', this.signOut.bind(this))
@@ -55,7 +57,7 @@ class Ctrl{
 		const appid = config.wechat.appid
 		const secret = config.wechat.secret
 		const url = `https://api.weixin.qq.com/sns/jscode2session?appid=${appid}&secret=${secret}&js_code=${code}&grant_type=authorization_code`
-		return this.requestAsync(url)
+		return this.requestAsync(url).then(doc => JSON.parse(doc), err => err)
 	}
 
 	/**
@@ -92,7 +94,6 @@ class Ctrl{
 
 		this.getSessionKey(code)
 		.then(doc => {
-			doc = JSON.parse(doc)
 			if (doc && doc.errmsg) return res.tools.setJson(doc.errcode, doc.errmsg)
 			if (doc && doc.openid) {
 				body.username = doc.openid
@@ -141,7 +142,6 @@ class Ctrl{
 
 		this.getSessionKey(code)
 		.then(doc => {
-			doc = JSON.parse(doc)
 			if (doc && doc.errmsg) return res.tools.setJson(doc.errcode, doc.errmsg)
 			if (doc && doc.openid) return this.model.findByName(doc.openid)
 		})
@@ -150,6 +150,56 @@ class Ctrl{
 			if (doc && doc._id) return res.tools.setJson(0, '登录成功', {
 				token: res.jwt.setToken(doc._id)
 			})
+		})
+		.catch(err => next(err))
+	}
+
+
+	/**
+	 * @api {post} /user/wechat/decrypt/data 微信用户信息的数据解密
+	 * @apiDescription 微信用户登录
+	 * @apiName wechatDecryptData
+	 * @apiGroup user
+	 *
+	 * @apiParam {String} code 登录凭证
+	 * @apiParam {String} encryptedData 包括敏感数据在内的完整用户信息的加密数据
+	 * @apiParam {String} iv 加密算法的初始向量
+	 * @apiParam {String} rawData 不包括敏感信息的原始数据字符串，用于计算签名
+	 * @apiParam {String} signature 使用 sha1( rawData + sessionkey ) 得到字符串，用于校验用户信息
+	 *
+	 * @apiPermission none
+	 * @apiSampleRequest /user/wechat/decrypt/data
+	 * 
+	 * @apiUse Success
+	 *
+	 * @apiSuccessExample Success-Response:
+	 *     HTTP/1.1 200 OK
+	 *     {
+	 *       "meta": {
+	 *       	"code": 0,
+	 *       	"message": "登录成功"
+	 *       },
+	 *       "data": {
+	 *       	"token": "token"
+	 *       }
+	 *     }
+	 */
+	wechatDecryptData(req, res, next) {
+		const encryptedData = req.body.encryptedData
+		const iv = req.body.iv
+		const rawData = req.body.rawData
+		const signature = req.body.signature
+		const code = req.body.code
+		const appid = config.wechat.appid
+
+		this.getSessionKey(code)
+		.then(doc => {
+			if (doc.errmsg) return res.tools.setJson(doc.errcode, doc.errmsg)
+			if (doc.openid) {
+				const pc = new WXBizDataCrypt(appid, doc.session_key)
+				const data = pc.decryptData(encryptedData , iv)
+				return res.tools.setJson(0, '调用成功', data)
+			}
 		})
 		.catch(err => next(err))
 	}
