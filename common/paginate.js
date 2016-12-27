@@ -1,3 +1,11 @@
+/**
+ * 分页插件类
+ * 
+ * @param page {Number} 当前页
+ * @param perPage {Number} 每页记录数
+ * @param total {Number} 总记录数
+ * 
+ */
 class Paginate{
 	constructor(page, perPage, total) {
 		Object.assign(this, {
@@ -5,7 +13,6 @@ class Paginate{
 			perPage, 
 			total, 
 		})
-		this.init()
 	}
 
 	/**
@@ -29,7 +36,8 @@ class Paginate{
 	    if(this.page > this.pages) {
 	        this.page = this.pages
 	    }
-	    this.item = {
+	    
+	    return {
 			page   : this.page, 
 			pages  : this.pages, 
 			perPage: this.perPage, 

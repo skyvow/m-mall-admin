@@ -1,5 +1,12 @@
 import crypto from 'crypto'
 
+/**
+ * 微信加密数据解密算法
+ * 
+ * @param appId {String} 敏感数据归属appid，开发者可校验此参数与自身appid是否一致
+ * @param sessionKey {String} 会话密钥
+ * 
+ */
 class WXBizDataCrypt {
 	constructor(appId, sessionKey) {
 		Object.assign(this, {

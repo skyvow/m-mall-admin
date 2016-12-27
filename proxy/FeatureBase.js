@@ -6,6 +6,21 @@ class FeatureBase{
 			model, 
 		})
 
+		this.init()
+	}
+
+	/**
+	 * init
+	 */
+	init() {
+		this.initDefaults()
+		this.initMethods()
+	}
+
+	/**
+	 * 设置默认参数
+	 */
+	initDefaults() {
 		this.suffix = 'Async'
 
 		this.instanceSource = {
@@ -27,25 +42,22 @@ class FeatureBase{
 			'findOne', 'findOneAndRemove', 'findOneAndUpdate',
 			'geoNear', 'geoSearch', 'mapReduce', 'populate', 'remove', 'update'
 		]
-
-		this.init()
 	}
 
 	/**
-	 * init
+	 * 遍历对象构造方法
 	 */
-	init() {
-		const self = this
-		for(let key in self.instanceSource) {	
-			self.instanceSource[key].forEach(function(value) {
-				self[value + self.suffix] = function() {
-					return self.getPromise(bluebird, self.getResolver(self.model[value], [...Array.from(arguments)], self.model))
+	initMethods() {
+		for(let key in this.instanceSource) {	
+			this.instanceSource[key].forEach((value, index) => {
+				this[value + this.suffix] = (...args) => {
+					return this.getPromise(bluebird, this.getResolver(this.model[value], args, this.model))
 				}
 			})
 		}
-		self.modelStaticsList.forEach(function(value) {
-			self[value + self.suffix] = function() {
-				return self.getPromise(bluebird, self.getResolver(self.model[value], [...Array.from(arguments)], self.model))
+		this.modelStaticsList.forEach((value, index) => {
+			this[value + this.suffix] = (...args) => {
+				return this.getPromise(bluebird, this.getResolver(this.model[value], args, this.model))
 			}
 		})
 	}
