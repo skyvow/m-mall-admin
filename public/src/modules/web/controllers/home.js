@@ -1,9 +1,10 @@
 class Ctrl {
-    constructor($state, WebService, BannerResource){
+    constructor($state, WebService, BannerResource, $ionicSlideBoxDelegate){
         Object.assign(this, {
             $state, 
             WebService, 
             BannerResource, 
+            $ionicSlideBoxDelegate, 
         })
         
         this.init()
@@ -20,6 +21,7 @@ class Ctrl {
             console.log(data)
             if (data.meta.code == 0) {
                 this.banners.items = data.data.items
+                this.$ionicSlideBoxDelegate.update()
             }
         })
     }
@@ -29,6 +31,7 @@ Ctrl.$inject = [
     '$state', 
     'WebService', 
     'BannerResource', 
+    '$ionicSlideBoxDelegate', 
 ] 
 
 export default Ctrl

@@ -123,25 +123,25 @@ function Router($stateProvider, $ocLazyLoadProvider) {
             }
         })
 
-        .state('web.user.password', {
-            tabsHidden: true,
-            url: '/password',
-            views: {
-                'tab-user': {
-                    templateProvider: ['$q', ($q) => {
-                        return $q((resolve) => {
-                            require.ensure([], () => {
-                                resolve(require('html!./tpl/password.html'))
-                            }, 'user.password.html')
-                        })
-                    }],
-                    controller: 'PasswordCtrl as vm'
-                }
-            },
-            resolve: {
-                authService: authService
-            }
-        })
+        // .state('web.user.password', {
+        //     tabsHidden: true,
+        //     url: '/password',
+        //     views: {
+        //         'tab-user': {
+        //             templateProvider: ['$q', ($q) => {
+        //                 return $q((resolve) => {
+        //                     require.ensure([], () => {
+        //                         resolve(require('html!./tpl/password.html'))
+        //                     }, 'user.password.html')
+        //                 })
+        //             }],
+        //             controller: 'PasswordCtrl as vm'
+        //         }
+        //     },
+        //     resolve: {
+        //         authService: authService
+        //     }
+        // })
 }
 
 Router.$inject = [
