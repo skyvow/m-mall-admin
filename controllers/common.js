@@ -34,6 +34,19 @@ class Ctrl{
 		this.app.post('/api/common/file/:id', this.delFile.bind(this))
 		this.app.post('/api/common/sign/check', this.signCheck.bind(this))
 		this.app.get('/api/common/captcha(/:width)?(/:height)?', this.captcha.bind(this))
+		this.app.post('/api/common/getwxacode', this.getwxacode.bind(this))
+		this.app.post('/api/common/getwxacodeunlimit', this.getwxacodeunlimit.bind(this))
+		this.app.post('/api/common/createwxaqrcode', this.createwxaqrcode.bind(this))
+	}
+
+	/**
+	 * 获取 access_token
+	 */
+	getAccessToken() {
+		const appid = config.wechat.appid
+		const secret = config.wechat.secret
+		const url = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${appid}&secret=${secret}`
+		return this.requestAsync(url)
 	}
 
 	/**
@@ -196,6 +209,156 @@ class Ctrl{
         const imgbase64 = new Buffer(img, 'base64')
 
 		res.end(imgbase64)
+	}
+
+	/**
+	 * @api {post} /common/getwxacode 接口A: 适用于需要的码数量较少的业务场景
+	 * @apiDescription 接口A: 适用于需要的码数量较少的业务场景 
+	 * @apiName getwxacode
+	 * @apiGroup common
+	 *
+	 * @apiParam {String} path 不能为空，最大长度 128 字节
+	 * @apiParam {Number} width 二维码的宽度
+	 * @apiParam {Boolean} auto_color 自动配置线条颜色，如果颜色依然是黑色，则说明不建议配置主色调
+	 * @apiParam {Object} line_color auth_color 为 false 时生效，使用 rgb 设置颜色 例如 {"r":"xxx","g":"xxx","b":"xxx"}
+	 * 
+	 * @apiPermission none
+	 * @apiSampleRequest /common/getwxacode
+	 * 
+	 * @apiUse Header
+	 * @apiUse Success
+	 *
+	 * @apiSuccessExample Success-Response:
+	 *     HTTP/1.1 200 OK
+	 *     {
+	 *       "meta": {
+	 *       	"code": 0,
+	 *       	"message": "调用成功"
+	 *       },
+	 *       "data": null
+	 *     }
+	 */
+	getwxacode(req, res, next) {
+		const path = req.body.path
+		const width = req.body.width || 430
+		const auto_color = req.body.auto_color || false
+		const line_color = req.body.line_color || {"r":"0","g":"0","b":"0"}
+
+		this.getAccessToken()
+		.then(doc => {
+			doc = JSON.parse(doc)
+			if(doc && doc.errmsg) return res.tools.setJson(doc.errcode, doc.errmsg)
+			request.post({
+				url: `https://api.weixin.qq.com/wxa/getwxacode?access_token=${doc.access_token}`, 
+				json: true,
+				body: {
+					path,
+					width,
+					auto_color,
+					line_color,
+				}, 
+			}, (error, response, body) => {
+				return res.tools.setJson(0, '调用成功', body)
+			})
+		})
+	}
+
+	/**
+	 * @api {post} /common/getwxacodeunlimit 接口B：适用于需要的码数量极多，或仅临时使用的业务场景
+	 * @apiDescription 接口B：适用于需要的码数量极多，或仅临时使用的业务场景 
+	 * @apiName getwxacodeunlimit
+	 * @apiGroup common
+	 *
+	 * @apiParam {String} scene 最大32个可见字符，只支持数字，大小写英文以及部分特殊字符：!#$&'()*+,/:;=?@-._~，其它字符请自行编码为合法字符（因不支持%，中文无法使用 urlencode 处理，请使用其他编码方式）
+	 * @apiParam {Number} width 二维码的宽度
+	 * @apiParam {Boolean} auto_color 自动配置线条颜色，如果颜色依然是黑色，则说明不建议配置主色调
+	 * @apiParam {Object} line_color auth_color 为 false 时生效，使用 rgb 设置颜色 例如 {"r":"xxx","g":"xxx","b":"xxx"}
+	 * 
+	 * @apiPermission none
+	 * @apiSampleRequest /common/getwxacodeunlimit
+	 * 
+	 * @apiUse Header
+	 * @apiUse Success
+	 *
+	 * @apiSuccessExample Success-Response:
+	 *     HTTP/1.1 200 OK
+	 *     {
+	 *       "meta": {
+	 *       	"code": 0,
+	 *       	"message": "调用成功"
+	 *       },
+	 *       "data": null
+	 *     }
+	 */
+	getwxacodeunlimit(req, res, next) {
+		const scene = req.body.scene
+		const width = req.body.width || 430
+		const auto_color = req.body.auto_color || false
+		const line_color = req.body.line_color || {"r":"0","g":"0","b":"0"}
+
+		this.getAccessToken()
+		.then(doc => {
+			doc = JSON.parse(doc)
+			if(doc && doc.errmsg) return res.tools.setJson(doc.errcode, doc.errmsg)
+			request.post({
+				url: `http://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=${doc.access_token}`, 
+				json: true,
+				body: {
+					scene,
+					width,
+					auto_color,
+					line_color,
+				}, 
+			}, (error, response, body) => {
+				return res.tools.setJson(0, '调用成功', body)
+			})
+		})
+	}
+
+	/**
+	 * @api {post} /common/createwxaqrcode 接口B：适用于需要的码数量极多，或仅临时使用的业务场景
+	 * @apiDescription 接口B：适用于需要的码数量极多，或仅临时使用的业务场景 
+	 * @apiName createwxaqrcode
+	 * @apiGroup common
+	 *
+	 * @apiParam {String} path 不能为空，最大长度 128 字节
+	 * @apiParam {Number} width 二维码的宽度
+	 * 
+	 * @apiPermission none
+	 * @apiSampleRequest /common/createwxaqrcode
+	 * 
+	 * @apiUse Header
+	 * @apiUse Success
+	 *
+	 * @apiSuccessExample Success-Response:
+	 *     HTTP/1.1 200 OK
+	 *     {
+	 *       "meta": {
+	 *       	"code": 0,
+	 *       	"message": "调用成功"
+	 *       },
+	 *       "data": null
+	 *     }
+	 */
+	createwxaqrcode(req, res, next) {
+		const path = req.body.path
+		const width = req.body.width || 430
+
+		this.getAccessToken()
+		.then(doc => {
+			doc = JSON.parse(doc)
+			if(doc && doc.errmsg) return res.tools.setJson(doc.errcode, doc.errmsg)
+			request.post({
+				url: `https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token=${doc.access_token}`, 
+				json: true,
+				body: {
+					path,
+					width,
+				}, 
+			}, (error, response, body) => {
+				return res.tools.setJson(0, '调用成功', body)
+			})
+		})
 	}
 }
 
