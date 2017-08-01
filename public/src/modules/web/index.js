@@ -30,7 +30,7 @@ function Router($stateProvider, $ocLazyLoadProvider) {
 
         .state('web.index', {
             abstract: true,
-            url: '/index',
+            url: '/',
             views: {
                 'menu-content': {
                     templateProvider: ['$q', ($q) => {
@@ -48,7 +48,7 @@ function Router($stateProvider, $ocLazyLoadProvider) {
         })
 
         .state('web.index.home', {
-            url: '/home',
+            url: '',
             views: {
                 'tab-home': {
                     templateProvider: ['$q', ($q) => {
