@@ -1,85 +1,83 @@
-##	m-mall-admin
+# m-mall-admin
 
-##	Overview
+## 项目说明：
 
-This is a boilerplate application for building REST APIs in Node.js using ES6 and Express with Code Coverage and JWT Authentication.
+- 基于 [Node.js](https://nodejs.org)、[MongoDB](https://www.mongodb.org)、[Redis](http://redis.io) 开发的系统
+- 基于 [Express](http://expressjs.com) 提供 RESTful API
+- 基于 [apidoc](http://apidocjs.com) 提供接口文档
+- 基于 [Angular.js](https://angularjs.org)、[Ionic](http://ionicframework.com)、[Webpack](http://webpack.github.io) 构建前端
+- 基于 ECMAScript 6 编码风格
 
-backend technology **Node.js** 、 **MongoDB** 、 **Redis** 、 **Express** 、 **ES6**
+## 目录结构：
 
-frontend technology **Angular.js** 、 **Ionic** 、 **ES6** 、 **Webpack**
+```
+m-mall-admin/
+  |-bin/                     	# 启动文件
+     |- wwww
+  |-common/                     # 公共文件
+     |- ...
+  |-controllers/				# 控制器
+     |- ...
+  |-db/							# 数据库配置
+     |- ...
+  |-logs/						# 日志文件
+     |- ...
+  |-middlewares/				# 中间件
+     |- ...
+  |-models/						# 模型
+     |- ...
+  |-proxy/						# 代理
+     |- ...
+  |-public/						# 静态资源文件
+     |- ...
+  |-routes/						# 路由文件
+     |- ...
+  |-test/						# 测试文件
+     |- ...
+  |-views/						# 视图文件
+     |- ...
+  |-apidoc.json					# 接口文档配置
+  |-app.js                      # 入口文件
+  |-config.js					# 配置文件
+  |-...
+```
 
-##	Directory
+##	安装部署：
 
-*	[Demo](#Demo)
-*	[Features](#Features)
-*	[Getting Started](#Getting Started)
-*	[Contributing](#Contributing)
-*	[License](#License)
-
-##	Demo
-[Demonstration component](http://skyvow.github.io/m-mall-admin/)
-
-##	Features
-
-| Feature                                | Summary                                                                                                                                                                                                                                                     |
-|----------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| ES6 via Babel                  	 	 | ES6 support using [Babel](https://babeljs.io/).  |
-| Authentication via JsonWebToken                  	 	 | Supports authentication using [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken).  |
-
-##	Getting Started
-
-Clone the repo:
-```sh
+克隆文件：
+```
 git clone git@github.com:skyvow/m-mall-admin.git
 cd m-mall-admin
 ```
 
-Install dependencies of backend:
-```sh
-npm install
+后端服务：
+```
+1. 安装 `Node.js[必须]` `MongoDB[必须]` `Redis[必须]`
+2. 启动 MongoDB 和 Redis
+3. 进入根目录下执行 `npm install` 安装项目所需依赖包
+3. 执行 `npm start` 启动服务
+4. 打开浏览器访问 `http://localhost:3000`
 ```
 
-Start server of backend:
-```sh
-# set DEBUG env variable to get debug logs
-npm start
+前端服务：
+```
+1. 首次启动项目未找到 build 文件
+2. 进入 public 目录下执行 `npm install` 安装项目所需依赖包
+3. 执行 `npm run build` 编译前端页面相关文件
+4. 编译成功后生成 build 文件，位于 public 目录下
 ```
 
-Install dependencies of frontend:
-```sh
-cd public
-npm install
+其他命令:
 ```
-
-Start server of frontend:
-```sh
-# monitor file changes and automatically compile
-npm run watch
-```
-
-Other commands:
-```sh
-# packaged and compressed files in a development environment
-npm run test
-# packaged and compressed files in a production environment
-npm run build
-```
-
-Create API document:
-```sh
-# apiDoc creates a documentation from API annotations in your source code
+# 生成 API 接口文档
 npm run apidoc
-```
-
-Execute tests:
-```sh
-# compile with babel and run tests
+# 跑测试用例
 npm test
 ```
 
-##	Contributing
+##	贡献
 
-Contributions, questions and comments are all welcome and encouraged. For code contributions submit a pull request with unit test.
+有任何意见或建议都欢迎提 issue
 
 ##	License
 
