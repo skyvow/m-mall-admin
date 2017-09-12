@@ -12,37 +12,37 @@
 
 ```
 m-mall-admin/
-  |-bin/                     	# 启动文件
+  |-bin/                      # 启动文件
      |- wwww
-  |-common/                     # 公共文件
+  |-common/                   # 公共文件
      |- ...
-  |-controllers/				# 控制器
+  |-controllers/              # 控制器
      |- ...
-  |-db/							# 数据库配置
+  |-db/                       # 数据库配置
      |- ...
-  |-logs/						# 日志文件
+  |-logs/                     # 日志文件
      |- ...
-  |-middlewares/				# 中间件
+  |-middlewares/              # 中间件
      |- ...
-  |-models/						# 模型
+  |-models/                   # 模型
      |- ...
-  |-proxy/						# 代理
+  |-proxy/                    # 代理
      |- ...
-  |-public/						# 静态资源文件
+  |-public/                   # 静态资源文件
      |- ...
-  |-routes/						# 路由文件
+  |-routes/                   # 路由文件
      |- ...
-  |-test/						# 测试文件
+  |-test/                     # 测试文件
      |- ...
-  |-views/						# 视图文件
+  |-views/                    # 视图文件
      |- ...
-  |-apidoc.json					# 接口文档配置
-  |-app.js                      # 入口文件
-  |-config.js					# 配置文件
+  |-apidoc.json               # 接口文档配置
+  |-app.js                    # 入口文件
+  |-config.js                 # 配置文件
   |-...
 ```
 
-##	安装部署：
+##  安装部署：
 
 克隆文件：
 ```
@@ -75,10 +75,10 @@ npm run apidoc
 npm test
 ```
 
-##	贡献
+##  贡献
 
 有任何意见或建议都欢迎提 issue
 
-##	License
+##  License
 
 MIT
