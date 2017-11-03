@@ -17,6 +17,7 @@ class Mongo{
 		this.dblink = this.config['mongo'][this.env]['connectionString']
 
 		const opts = {
+			useMongoClient: true,
 			server: {
 				socketOptions: { 
 					keepAlive: 1 
@@ -30,6 +31,8 @@ class Mongo{
 			.on('error', err => console.log('------ Mongodb connection failed ------' + err))
 			.on('open', () => console.log('------ Mongodb connection succeed ------'))
 
+		mongoose.Promise = global.Promise
+			
 		mongoomise.promisifyAll(mongoose, bluebird)
 	}
 }
