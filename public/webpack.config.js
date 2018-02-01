@@ -43,7 +43,7 @@ var config = {
         vendor: [
             'moment',
             'angular',
-            'angular-i18n/angular-locale_ZH-CN.js',
+            'angular-i18n/angular-locale_zh-cn.js',
             'angular-ui-router',
             'oclazyload',
             'angular-animate',
