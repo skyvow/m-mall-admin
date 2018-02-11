@@ -5,6 +5,6 @@ import jwt from '../common/jwtauth'
 export default function(req, res, next) {
 	res.paginate = (...args) => new paginate(...args).init()
 	res.tools = new tools(req, res)
-	//res.jwt   = jwt
+	res.jwt   = jwt
 	next()
 }
