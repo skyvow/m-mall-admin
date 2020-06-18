@@ -4,7 +4,7 @@
   "description": "",
   "main": "main.js",
   "dependencies": {
-    "angular": "=1.5.6",
+    "angular": "=1.8.0",
     "angular-animate": "=1.5.6",
     "angular-i18n": "=1.5.6",
     "angular-moment": "=0.10.3",
