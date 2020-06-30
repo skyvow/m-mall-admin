@@ -24,7 +24,7 @@
     "crypto": "=0.0.3",
     "express": "=4.14.0",
     "express-handlebars": "=3.0.0",
-    "express-jwt": "=3.4.0",
+    "express-jwt": "=6.0.0",
     "express-session": "=1.14.1",
     "formidable": "=1.0.17",
     "jsonwebtoken": "=7.1.9",
